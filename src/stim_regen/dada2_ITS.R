@@ -37,15 +37,22 @@ filtRs <- file.path("raw_data/stim_regen/filt_fastq/", meta$ITS2_R2)
 out <- filterAndTrim(fnFs, filtFs, fnRs, filtRs, truncLen = c(trunc_f, trunc_r),
                      maxN=0, maxEE=c(maxEE_f,maxEE_r), rm.phix=TRUE,
                      compress=TRUE, multithread=TRUE)
-write.csv(out, 'data/stim_regen/16Sdada2/dada2_reads_filt.csv', row.names = T)
+write.csv(out, 'data/stim_regen/ITS2dada2/dada2_reads_filt.csv', row.names = T)
 
-#filter samples for low reads after trimming (<25,000 reads.out)
-lsamp <- data.frame(out) %>% filter(reads.out<25000) %>% rownames()
+#filter samples for low reads after trimming (<2000 reads.out)
+lsamp <- data.frame(out) %>% filter(reads.out<2000) %>% rownames()
+ctrls <- c("C6_1-ITS2_S163_R1_001.fastq.gz", "C6_2-ITS2_S165_R1_001.fastq.gz", "C6_3-ITS2_S167_R1_001.fastq.gz",  "C6_5-ITS2_S171_R1_001.fastq.gz", "C6_6-ITS2_S173_R1_001.fastq.gz",
+           "ZS1PRE_1-ITS2_S997_R1_001.fastq.gz","ZS1PRE_2-ITS2_S999_R1_001.fastq.gz",
+           "ZS2POST_1-ITS2_S1001_R1_001.fastq.gz","ZS2POST_2-ITS2_S1003_R1_001.fastq.gz") #remove extremely low reads #"C6_4-ITS2_S169_R1_001.fastq.gz"
 for (i in lsamp){
-  if (file.exists(paste0("raw_data/stim_regen/filt_fastq/",i))){
-    file.remove(paste0("raw_data/stim_regen/filt_fastq/",i))
+  if (!(i %in% ctrls)){
+    if (file.exists(paste0("raw_data/stim_regen/filt_fastq/",i))){
+      print(i)
+      file.remove(paste0("raw_data/stim_regen/filt_fastq/",i))
+    }
   }
 }
+
 
 #prepare for error rate learning
 filt_fs <- c()
